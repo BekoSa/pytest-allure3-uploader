@@ -2,7 +2,7 @@
 
 Uploads `allure-results` to allure3-docker-service.
 
-## Install (editable)
+## Install
 
 pip install -e .
 
