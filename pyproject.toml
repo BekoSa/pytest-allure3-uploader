@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [project.entry-points.pytest11]
-allure_uploader = "pytest_allure_uploader.plugin"
+allure_uploader = "pytest_allure3_uploader.plugin"
