@@ -14,6 +14,7 @@ pytest --alluredir=allure-results \
   --allure-upload \
   --allure-upload-url http://localhost:8080 \
   --allure-upload-project demo
+  --allure-config ./allure.config.mjs
 ```
 ## Environment variables
 
@@ -21,3 +22,4 @@ pytest --alluredir=allure-results \
 - ALLURE_UPLOAD_PROJECT
 - ALLURE_RESULTS_DIR
 - ALLURE_UPLOAD_TIMEOUT
+- ALLURE_CONFIG
