@@ -3,8 +3,8 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pytest-allure-uploader"
-version = "0.1.0"
+name = "pytest-allure3-uploader"
+version = "0.2.0"
 description = "Upload allure-results to allure3-docker-service"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [project.entry-points.pytest11]
-allure_uploader = "pytest_allure_uploader.plugin"
+allure_uploader = "pytest_allure3_uploader.plugin"

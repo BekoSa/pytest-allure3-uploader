@@ -18,6 +18,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     group.addoption("--allure-results-dir", action="store", default=os.getenv("ALLURE_RESULTS_DIR", "allure-results"))
     group.addoption("--allure-upload-timeout", action="store", default=os.getenv("ALLURE_UPLOAD_TIMEOUT", "60"))
     group.addoption("--allure-upload-insecure", action="store_true", default=False)
+    group.addoption(
+        "--allure-config",
+        action="store",
+        default=os.getenv("ALLURE_CONFIG", None),
+        help="Path to Allure 3 config file (.mjs). Will be sent as multipart field 'config'.",
+    )
 
 
 def _get_alluredir_if_any(config: pytest.Config) -> Optional[str]:
@@ -62,6 +68,13 @@ def _collect_pytest_stats(config: pytest.Config) -> Dict[str, int]:
     return out
 
 
+def _resolve_config_path(config: pytest.Config) -> Optional[Path]:
+    cli = config.getoption("--allure-config")
+    if cli:
+        return Path(str(cli)).expanduser()
+    return None
+
+
 def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
     config = session.config
 
@@ -88,6 +101,11 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
             tr.write_line(f"[allure-uploader] Results dir not found: {results_dir}")
         return
 
+    config_path = _resolve_config_path(config)
+    if config_path is not None:
+        if not config_path.exists() or not config_path.is_file():
+            tr.write_line(f"[allure-uploader] Config file not found: {config_path}")
+
     meta: Dict[str, Any] = default_meta_from_env()
     meta["pytest_exitstatus"] = exitstatus
     meta["pytest_stats"] = _collect_pytest_stats(config)
@@ -99,7 +117,7 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
             verify_tls=verify_tls,
         )
 
-        res = client.upload(project=project, results_dir=results_dir, meta=meta)
+        res = client.upload(project=project, results_dir=results_dir, meta=meta, config=config_path)
 
         if tr:
             tr.write_sep("=", "Allure upload")
